@@ -109,6 +109,14 @@
                         <label for="exchangeRate">환율</label>
                         <input type="text" id="exchangeRate" value="1,400" class="rounded-lg">
                     </div>
+                     <div class="input-group flex flex-col">
+                        <label for="coinQuantity">코인 수량</label>
+                        <input type="text" id="coinQuantity" value="1" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="totalValuation">총 평가액</label>
+                        <input type="text" id="totalValuation" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                    </div>
                 </div>
             </div>
         </div>
@@ -216,6 +224,8 @@
             const totalFundRateInput = document.getElementById('totalFundRate');
             const bitcoinPriceInput = document.getElementById('bitcoinPrice');
             const exchangeRateInput = document.getElementById('exchangeRate');
+            const coinQuantityInput = document.getElementById('coinQuantity');
+            const totalValuationInput = document.getElementById('totalValuation');
 
             const scenario1MarginInput = document.getElementById('scenario1Margin');
             const scenario1EntryInput = document.getElementById('scenario1EntryPrice');
@@ -253,16 +263,22 @@
             const calculateAll = (event) => {
                 const isScenario1 = event && event.target.id.startsWith('scenario1');
                 const isScenario2 = event && event.target.id.startsWith('scenario2');
+                const isBasicInfo = event && (event.target.id === 'bitcoinPrice' || event.target.id === 'exchangeRate' || event.target.id === 'coinQuantity');
 
                 // 입력값 가져오기 (쉼표 제거)
                 const fundRate = cleanNumberInput(fundRateInput.value);
                 const fundDays = cleanNumberInput(fundDaysInput.value);
                 const bitcoinPrice = cleanNumberInput(bitcoinPriceInput.value);
                 const exchangeRate = cleanNumberInput(exchangeRateInput.value);
+                const coinQuantity = cleanNumberInput(coinQuantityInput.value);
             
                 // 총 펀비 계산 (요청에 따라 *3 추가)
                 const totalFundRateDisplay = fundRate * fundDays * 3;
                 totalFundRateInput.value = formatNumber(totalFundRateDisplay, 2);
+
+                // 총 평가액 계산
+                const totalValuation = bitcoinPrice * exchangeRate * coinQuantity;
+                totalValuationInput.value = formatNumber(totalValuation, 0);
             
                 // 시나리오 1 계산 로직
                 let s1BaseMargin = cleanNumberInput(scenario1MarginInput.value);
