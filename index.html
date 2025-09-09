@@ -135,7 +135,7 @@
                         <input type="text" id="scenario1EntryPrice" value="120,000" class="rounded-lg">
                     </div>
                     <div class="input-group flex flex-col">
-                        <label for="scenario1ExitPrice">청산가</label>
+                        <label for="scenario1ExitPrice">매도가</label>
                         <input type="text" id="scenario1ExitPrice" value="180,000" class="rounded-lg">
                     </div>
                     <div class="input-group flex flex-col">
@@ -158,7 +158,7 @@
                         <input type="text" id="scenario2EntryPrice" value="180,000" class="rounded-lg">
                     </div>
                     <div class="input-group flex flex-col">
-                        <label for="scenario2ExitPrice">청산가</label>
+                        <label for="scenario2ExitPrice">매도가</label>
                         <input type="text" id="scenario2ExitPrice" value="240,000" class="rounded-lg">
                     </div>
                     <div class="input-group flex flex-col">
@@ -288,13 +288,13 @@
 
                 if (isScenario1) {
                     if (event.target.id === 'scenario1ReturnRate') {
-                        // 수익률 입력 시 청산가 계산
+                        // 수익률 입력 시 매도가 계산
                         if (s1Entry !== 0) {
                             s1Exit = s1Entry * (1 + s1ReturnRate / 100);
                             scenario1ExitInput.value = formatNumber(s1Exit, 0);
                         }
                     } else {
-                        // 진입가 또는 청산가 입력 시 수익률 계산
+                        // 진입가 또는 매도가 입력 시 수익률 계산
                         if (s1Entry !== 0) {
                             s1ReturnRate = ((s1Exit - s1Entry) / s1Entry) * 100;
                             scenario1ReturnRateInput.value = formatNumber(s1ReturnRate, 2);
@@ -310,13 +310,13 @@
 
                 if (isScenario2) {
                     if (event.target.id === 'scenario2ReturnRate') {
-                        // 수익률 입력 시 청산가 계산
+                        // 수익률 입력 시 매도가 계산
                         if (s2Entry !== 0) {
                             s2Exit = s2Entry * (1 + s2ReturnRate / 100);
                             scenario2ExitInput.value = formatNumber(s2Exit, 0);
                         }
                     } else {
-                        // 진입가 또는 청산가 입력 시 수익률 계산
+                        // 진입가 또는 매도가 입력 시 수익률 계산
                         if (s2Entry !== 0) {
                             s2ReturnRate = ((s2Exit - s2Entry) / s2Entry) * 100;
                             scenario2ReturnRateInput.value = formatNumber(s2ReturnRate, 2);
