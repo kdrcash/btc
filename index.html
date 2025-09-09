@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수익률 계산기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .input-group label {
+            font-weight: 600;
+        }
+        .input-group input, .input-group select {
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin-top: 0.5rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+        min-width: 800px;
+        border-collapse: collapse;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: center;
+        }
+        th {
+            background-color: #e5e7eb;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .final-result-table th, .final-result-table td {
+            text-align: left;
+        }
+        .final-result-table td:last-child {
+            text-align: right;
+        }
+        
+        .s1-header {
+            background-color: #e0f2fe; /* 연한 파란색 */
+        }
+        .s2-header {
+            background-color: #ede9fe; /* 연한 보라색 */
+        }
+        .s1-cell {
+            background-color: #f1f5f9; /* 연한 회색 */
+        }
+        .s2-cell {
+            background-color: #f3e8ff; /* 연한 보라색 */
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="container mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-6">수익률 계산기</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- 펀비 정보 카드 -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-4">펀비 정보</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="input-group flex flex-col">
+                        <label for="fundRate">일 펀비율 (%)</label>
+                        <input type="text" id="fundRate" value="0.045" step="0.001" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="fundDays">펀비일수</label>
+                        <input type="text" id="fundDays" value="180" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col sm:col-span-2">
+                        <label for="totalFundRate">총 펀비 (%)</label>
+                        <input type="text" id="totalFundRate" value="24.3" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기본 정보 카드 -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-4">기본 정보</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="input-group flex flex-col">
+                        <label for="bitcoinPrice">최종 비트코인 가격 ($)</label>
+                        <input type="text" id="bitcoinPrice" value="300,000" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="exchangeRate">환율</label>
+                        <input type="text" id="exchangeRate" value="1,400" class="rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- 시나리오 1 카드 -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-4">시나리오 1</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="input-group flex flex-col">
+                        <label for="scenario1Margin">증거금 (비트코인)</label>
+                        <input type="text" id="scenario1Margin" value="15" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="scenario1EntryPrice">진입가</label>
+                        <input type="text" id="scenario1EntryPrice" value="120,000" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="scenario1ExitPrice">청산가</label>
+                        <input type="text" id="scenario1ExitPrice" value="180,000" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="scenario1ReturnRate">수익률 (%)</label>
+                        <input type="text" id="scenario1ReturnRate" value="50.00" class="rounded-lg">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 시나리오 2 카드 -->
+            <div class="card">
+                <h2 class="text-xl font-semibold mb-4">시나리오 2</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="input-group flex flex-col">
+                        <label for="scenario2Margin">증거금 (비트코인)</label>
+                        <input type="text" id="scenario2Margin" value="20" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="scenario2EntryPrice">진입가</label>
+                        <input type="text" id="scenario2EntryPrice" value="180,000" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="scenario2ExitPrice">청산가</label>
+                        <input type="text" id="scenario2ExitPrice" value="240,000" class="rounded-lg">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="scenario2ReturnRate">수익률 (%)</label>
+                        <input type="text" id="scenario2ReturnRate" value="33.33" class="rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결과 표 -->
+        <div class="card table-container">
+            <h2 class="text-xl font-semibold mb-4">최종 결과</h2>
+            <table class="w-full text-sm rounded-lg">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
+                        <th rowspan="2" class="rounded-tl-lg">청산시 손실률</th>
+                        <th colspan="6" class="s1-header border-b border-gray-300">시나리오 1</th>
+                        <th colspan="6" class="s2-header rounded-tr-lg">시나리오 2</th>
+                    </tr>
+                    <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
+                        <th class="s1-header">포지션 비트</th>
+                        <th class="s1-header">비트 전환율 (%)</th>
+                        <th class="s1-header">펀비 (%)</th>
+                        <th class="s1-header">순이익 비율 (%)</th>
+                        <th class="s1-header">수익 비트</th>
+                        <th class="s1-header">최종 증거금</th>
+                        <th class="s2-header">포지션 비트</th>
+                        <th class="s2-header">비트 전환율 (%)</th>
+                        <th class="s2-header">펀비 (%)</th>
+                        <th class="s2-header">순이익 비율 (%)</th>
+                        <th class="s2-header">수익 비트</th>
+                        <th class="s2-header">최종 증거금</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTableBody" class="divide-y divide-gray-200">
+                    <!-- Data rows will be generated here by JavaScript -->
+                </tbody>
+            </table>
+            
+            <div class="mt-6 pt-6">
+                <h2 class="text-xl font-semibold mb-4">최종 차익 결과</h2>
+                <table class="w-full text-sm rounded-lg border border-gray-200 final-result-table">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
+                            <th class="w-1/3 p-4">재투자 역산율</th>
+                            <th class="w-1/3 p-4">최종 차익 비트</th>
+                            <th class="w-1/3 p-4">환산 가격 (원)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="finalResultsTableBody" class="divide-y divide-gray-200">
+                        <!-- Final profit data rows will be generated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fundRateInput = document.getElementById('fundRate');
+            const fundDaysInput = document.getElementById('fundDays');
+            const totalFundRateInput = document.getElementById('totalFundRate');
+            const bitcoinPriceInput = document.getElementById('bitcoinPrice');
+            const exchangeRateInput = document.getElementById('exchangeRate');
+
+            const scenario1MarginInput = document.getElementById('scenario1Margin');
+            const scenario1EntryInput = document.getElementById('scenario1EntryPrice');
+            const scenario1ExitInput = document.getElementById('scenario1ExitPrice');
+            const scenario1ReturnRateInput = document.getElementById('scenario1ReturnRate');
+
+            const scenario2MarginInput = document.getElementById('scenario2Margin');
+            const scenario2EntryInput = document.getElementById('scenario2EntryPrice');
+            const scenario2ExitInput = document.getElementById('scenario2ExitPrice');
+            const scenario2ReturnRateInput = document.getElementById('scenario2ReturnRate');
+
+            const resultTableBody = document.getElementById('resultTableBody');
+            const finalResultsTableBody = document.getElementById('finalResultsTableBody');
+
+            // 재투자 역산율 배열
+            const investmentRates = [100, 95, 90, 85, 80, 75];
+
+            // 쉼표 제거 함수
+            const cleanNumberInput = (value) => {
+                if (typeof value === 'string') {
+                    return parseFloat(value.replace(/,/g, '')) || 0;
+                }
+                return parseFloat(value) || 0;
+            };
+
+            // 숫자 포맷팅 함수
+            const formatNumber = (num, decimalPlaces) => {
+                if (typeof num !== 'number' || isNaN(num)) return '';
+                if (decimalPlaces !== undefined) {
+                    return num.toFixed(decimalPlaces).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+                return num.toLocaleString('ko-KR');
+            };
+
+            const calculateAll = (event) => {
+                const isScenario1 = event && event.target.id.startsWith('scenario1');
+                const isScenario2 = event && event.target.id.startsWith('scenario2');
+
+                // 입력값 가져오기 (쉼표 제거)
+                const fundRate = cleanNumberInput(fundRateInput.value) / 100;
+                const fundDays = cleanNumberInput(fundDaysInput.value);
+                const bitcoinPrice = cleanNumberInput(bitcoinPriceInput.value);
+                const exchangeRate = cleanNumberInput(exchangeRateInput.value);
+            
+                // 총 펀비 계산 (요청에 따라 *3 추가)
+                const totalFundRate = fundRate * fundDays * 3;
+                totalFundRateInput.value = formatNumber(totalFundRate * 100, 2);
+            
+                // 시나리오 1 계산 로직
+                let s1BaseMargin = cleanNumberInput(scenario1MarginInput.value);
+                let s1Entry = cleanNumberInput(scenario1EntryInput.value);
+                let s1Exit = cleanNumberInput(scenario1ExitInput.value);
+                let s1ReturnRate = cleanNumberInput(scenario1ReturnRateInput.value);
+
+                if (isScenario1) {
+                    if (event.target.id === 'scenario1ReturnRate') {
+                        // 수익률 입력 시 청산가 계산
+                        if (s1Entry !== 0) {
+                            s1Exit = s1Entry * (1 + s1ReturnRate / 100);
+                            scenario1ExitInput.value = formatNumber(s1Exit, 0);
+                        }
+                    } else {
+                        // 진입가 또는 청산가 입력 시 수익률 계산
+                        if (s1Entry !== 0) {
+                            s1ReturnRate = ((s1Exit - s1Entry) / s1Entry) * 100;
+                            scenario1ReturnRateInput.value = formatNumber(s1ReturnRate, 2);
+                        }
+                    }
+                }
+            
+                // 시나리오 2 계산 로직
+                let s2BaseMargin = cleanNumberInput(scenario2MarginInput.value);
+                let s2Entry = cleanNumberInput(scenario2EntryInput.value);
+                let s2Exit = cleanNumberInput(scenario2ExitInput.value);
+                let s2ReturnRate = cleanNumberInput(scenario2ReturnRateInput.value);
+
+                if (isScenario2) {
+                    if (event.target.id === 'scenario2ReturnRate') {
+                        // 수익률 입력 시 청산가 계산
+                        if (s2Entry !== 0) {
+                            s2Exit = s2Entry * (1 + s2ReturnRate / 100);
+                            scenario2ExitInput.value = formatNumber(s2Exit, 0);
+                        }
+                    } else {
+                        // 진입가 또는 청산가 입력 시 수익률 계산
+                        if (s2Entry !== 0) {
+                            s2ReturnRate = ((s2Exit - s2Entry) / s2Entry) * 100;
+                            scenario2ReturnRateInput.value = formatNumber(s2ReturnRate, 2);
+                        }
+                    }
+                }
+
+                // 표 업데이트
+                renderTable(totalFundRate * 100, s1Entry, s1Exit, s1BaseMargin, s2Entry, s2Exit, s2BaseMargin, bitcoinPrice, exchangeRate);
+            };
+
+            const renderTable = (totalFundRatePercent, s1Entry, s1Exit, s1BaseMargin, s2Entry, s2Exit, s2BaseMargin, bitcoinPrice, exchangeRate) => {
+                resultTableBody.innerHTML = '';
+                finalResultsTableBody.innerHTML = '';
+                
+                investmentRates.forEach(rate => {
+                    // 시나리오 1 계산
+                    const s1BitConversionRate = s1Exit && s1Entry ? ((s1Exit - s1Entry) / s1Exit) * 100 : 0;
+                    const s1PositionBit = s1BaseMargin / (rate / 100);
+                    const s1FundNetProfitRate = s1BitConversionRate - totalFundRatePercent;
+                    const s1ProfitBit = s1PositionBit * (s1FundNetProfitRate / 100);
+                    const s1FinalMargin = s1BaseMargin + s1ProfitBit;
+
+                    // 시나리오 2 계산
+                    const s2BitConversionRate = s2Exit && s2Entry ? ((s2Exit - s2Entry) / s2Exit) * 100 : 0;
+                    const s2PositionBit = s2BaseMargin / (rate / 100);
+                    const s2FundNetProfitRate = s2BitConversionRate - totalFundRatePercent;
+                    const s2ProfitBit = s2PositionBit * (s2FundNetProfitRate / 100);
+                    const s2FinalMargin = s2BaseMargin + s2ProfitBit;
+
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td class="font-bold">${100 - rate}%</td>
+                        <td class="s1-cell">${formatNumber(s1PositionBit, 2)}</td>
+                        <td class="s1-cell">${formatNumber(s1BitConversionRate, 2)}%</td>
+                        <td class="s1-cell">${formatNumber(totalFundRatePercent, 2)}%</td>
+                        <td class="s1-cell">${formatNumber(s1FundNetProfitRate, 2)}%</td>
+                        <td class="s1-cell">${formatNumber(s1ProfitBit, 2)}</td>
+                        <td class="s1-cell">${formatNumber(s1FinalMargin, 2)}</td>
+                        <td class="s2-cell">${formatNumber(s2PositionBit, 2)}</td>
+                        <td class="s2-cell">${formatNumber(s2BitConversionRate, 2)}%</td>
+                        <td class="s2-cell">${formatNumber(totalFundRatePercent, 2)}%</td>
+                        <td class="s2-cell">${formatNumber(s2FundNetProfitRate, 2)}%</td>
+                        <td class="s2-cell">${formatNumber(s2ProfitBit, 2)}</td>
+                        <td class="s2-cell">${formatNumber(s2FinalMargin, 2)}</td>
+                    `;
+                    resultTableBody.appendChild(newRow);
+
+                    // 최종 차익 비트 및 환산 가격 계산
+                    const finalProfitBit = s2FinalMargin - s1BaseMargin;
+                    const finalProfitPrice = finalProfitBit * bitcoinPrice * exchangeRate;
+                    
+                    // 환산가격을 억 단위로 변환하고 소수점 둘째 자리까지 표기
+                    const finalProfitPriceBillion = (finalProfitPrice / 100000000).toFixed(2);
+                    
+                    const finalRow = document.createElement('tr');
+                    finalRow.innerHTML = `
+                        <td class="font-bold">${100 - rate}%</td>
+                        <td>${formatNumber(finalProfitBit, 2)}</td>
+                        <td>${finalProfitPriceBillion}억</td>
+                    `;
+                    finalResultsTableBody.appendChild(finalRow);
+                });
+            };
+
+            // 이벤트 리스너 등록
+            const allInputs = document.querySelectorAll('input');
+            allInputs.forEach(input => {
+                input.addEventListener('input', (event) => {
+                    const value = event.target.value.replace(/[^0-9.]/g, ''); // 숫자와 소수점만 남김
+                    const numValue = parseFloat(value);
+                    if (!isNaN(numValue)) {
+                        event.target.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    }
+                    
+                    calculateAll(event);
+                });
+            });
+            
+            // 초기 계산 및 렌더링
+            calculateAll();
+        });
+    </script>
+</body>
+</html>
