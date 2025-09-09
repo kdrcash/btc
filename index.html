@@ -92,7 +92,7 @@
                     </div>
                     <div class="input-group flex flex-col sm:col-span-2">
                         <label for="totalFundRate">총 펀비 (%)</label>
-                        <input type="text" id="totalFundRate" value="24.3" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                        <input type="text" id="totalFundRate" value="8.1" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
                     </div>
                 </div>
             </div>
@@ -196,7 +196,7 @@
                 <table class="w-full text-sm rounded-lg border border-gray-200 final-result-table">
                     <thead>
                         <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
-                            <th class="w-1/3 p-4">재투자 역산율</th>
+                            <th class="w-1/3 p-4">청산시 손실률</th>
                             <th class="w-1/3 p-4">최종 차익 비트</th>
                             <th class="w-1/3 p-4">환산 가격 (원)</th>
                         </tr>
@@ -255,14 +255,14 @@
                 const isScenario2 = event && event.target.id.startsWith('scenario2');
 
                 // 입력값 가져오기 (쉼표 제거)
-                const fundRate = cleanNumberInput(fundRateInput.value) / 100;
+                const fundRate = cleanNumberInput(fundRateInput.value);
                 const fundDays = cleanNumberInput(fundDaysInput.value);
                 const bitcoinPrice = cleanNumberInput(bitcoinPriceInput.value);
                 const exchangeRate = cleanNumberInput(exchangeRateInput.value);
             
                 // 총 펀비 계산 (요청에 따라 *3 추가)
-                const totalFundRate = fundRate * fundDays * 3;
-                totalFundRateInput.value = formatNumber(totalFundRate * 100, 2);
+                const totalFundRateDisplay = fundRate * fundDays * 3;
+                totalFundRateInput.value = formatNumber(totalFundRateDisplay, 2);
             
                 // 시나리오 1 계산 로직
                 let s1BaseMargin = cleanNumberInput(scenario1MarginInput.value);
@@ -309,10 +309,11 @@
                 }
 
                 // 표 업데이트
-                renderTable(totalFundRate * 100, s1Entry, s1Exit, s1BaseMargin, s2Entry, s2Exit, s2BaseMargin, bitcoinPrice, exchangeRate);
+                const totalFundRateDecimal = totalFundRateDisplay / 100;
+                renderTable(totalFundRateDecimal, s1Entry, s1Exit, s1BaseMargin, s2Entry, s2Exit, s2BaseMargin, bitcoinPrice, exchangeRate);
             };
 
-            const renderTable = (totalFundRatePercent, s1Entry, s1Exit, s1BaseMargin, s2Entry, s2Exit, s2BaseMargin, bitcoinPrice, exchangeRate) => {
+            const renderTable = (totalFundRateDecimal, s1Entry, s1Exit, s1BaseMargin, s2Entry, s2Exit, s2BaseMargin, bitcoinPrice, exchangeRate) => {
                 resultTableBody.innerHTML = '';
                 finalResultsTableBody.innerHTML = '';
                 
@@ -320,29 +321,29 @@
                     // 시나리오 1 계산
                     const s1BitConversionRate = s1Exit && s1Entry ? ((s1Exit - s1Entry) / s1Exit) * 100 : 0;
                     const s1PositionBit = s1BaseMargin / (rate / 100);
-                    const s1FundNetProfitRate = s1BitConversionRate - totalFundRatePercent;
+                    const s1FundNetProfitRate = s1BitConversionRate - totalFundRateDecimal * 100;
                     const s1ProfitBit = s1PositionBit * (s1FundNetProfitRate / 100);
                     const s1FinalMargin = s1BaseMargin + s1ProfitBit;
 
                     // 시나리오 2 계산
                     const s2BitConversionRate = s2Exit && s2Entry ? ((s2Exit - s2Entry) / s2Exit) * 100 : 0;
                     const s2PositionBit = s2BaseMargin / (rate / 100);
-                    const s2FundNetProfitRate = s2BitConversionRate - totalFundRatePercent;
+                    const s2FundNetProfitRate = s2BitConversionRate - totalFundRateDecimal * 100;
                     const s2ProfitBit = s2PositionBit * (s2FundNetProfitRate / 100);
                     const s2FinalMargin = s2BaseMargin + s2ProfitBit;
 
                     const newRow = document.createElement('tr');
                     newRow.innerHTML = `
-                        <td class="font-bold">${100 - rate}%</td>
+                        <td class="font-bold">${rate}%</td>
                         <td class="s1-cell">${formatNumber(s1PositionBit, 2)}</td>
                         <td class="s1-cell">${formatNumber(s1BitConversionRate, 2)}%</td>
-                        <td class="s1-cell">${formatNumber(totalFundRatePercent, 2)}%</td>
+                        <td class="s1-cell">${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
                         <td class="s1-cell">${formatNumber(s1FundNetProfitRate, 2)}%</td>
                         <td class="s1-cell">${formatNumber(s1ProfitBit, 2)}</td>
                         <td class="s1-cell">${formatNumber(s1FinalMargin, 2)}</td>
                         <td class="s2-cell">${formatNumber(s2PositionBit, 2)}</td>
                         <td class="s2-cell">${formatNumber(s2BitConversionRate, 2)}%</td>
-                        <td class="s2-cell">${formatNumber(totalFundRatePercent, 2)}%</td>
+                        <td class="s2-cell">${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
                         <td class="s2-cell">${formatNumber(s2FundNetProfitRate, 2)}%</td>
                         <td class="s2-cell">${formatNumber(s2ProfitBit, 2)}</td>
                         <td class="s2-cell">${formatNumber(s2FinalMargin, 2)}</td>
@@ -358,7 +359,7 @@
                     
                     const finalRow = document.createElement('tr');
                     finalRow.innerHTML = `
-                        <td class="font-bold">${100 - rate}%</td>
+                        <td class="font-bold">${rate}%</td>
                         <td>${formatNumber(finalProfitBit, 2)}</td>
                         <td>${finalProfitPriceBillion}억</td>
                     `;
@@ -386,4 +387,3 @@
     </script>
 </body>
 </html>
-
