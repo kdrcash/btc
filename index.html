@@ -111,10 +111,10 @@
 </head>
 <body class="p-6">
     <div class="container mx-auto">
-        <div class="flex items-center justify-center mb-6">
-            <h1 class="text-3xl font-bold text-center">수익률 계산기</h1>
-            <button id="infoButton" class="ml-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1 px-3 rounded-full text-sm">확인사항</button>
-        </div>
+        <h1 class="text-3xl font-bold text-center mb-6 relative">
+            수익률 계산기
+            <button id="infoButton" class="absolute top-1/2 -translate-y-1/2 ml-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-1 px-3 rounded-full text-sm">확인사항</button>
+        </h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <!-- 펀비 정보 카드 -->
@@ -129,9 +129,13 @@
                         <label for="fundDays">펀비일수</label>
                         <input type="text" id="fundDays" value="180" class="rounded-lg">
                     </div>
-                    <div class="input-group flex flex-col sm:col-span-2">
+                    <div class="input-group flex flex-col">
                         <label for="totalFundRate">총 펀비 (%)</label>
                         <input type="text" id="totalFundRate" value="8.1" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                    </div>
+                    <div class="input-group flex flex-col">
+                        <label for="maintenanceMarginRate">유지증거금 (%)</label>
+                        <input type="text" id="maintenanceMarginRate" value="0.5" step="0.001" class="rounded-lg">
                     </div>
                 </div>
             </div>
@@ -296,13 +300,12 @@
             <span class="close-button">&times;</span>
             <h3 class="text-2xl font-bold mb-4">확인사항</h3>
             <p class="mb-2"><strong>청산 가격 공식:</strong></p>
-            <p class="mb-4">
-                $\text{청산 가격} = \frac{\text{진입가} \times \text{포지션 비트} \times (1+0.5\%)}{\text{증거금} + \text{포지션 비트}}$
+            <p id="liquidationFormula" class="mb-4">
             </p>
             <p class="mb-2"><strong>공식 설명:</strong></p>
             <ul class="list-disc list-inside mb-4">
                 <li>청산 가격은 진입 시 포지션 가치와 증거금의 합에 대한 비율로 계산됩니다.</li>
-                <li>분자값의 **$0.5\%$**는 바이낸스 Coin-M의 **유지 증거금율**을 의미합니다.</li>
+                <li>분자값에 포함된 유지증거금은 바이낸스 Coin-M의 **유지 증거금율**을 의미합니다.</li>
             </ul>
             <p class="text-sm text-gray-500">
                 *본 계산기는 입력값을 기준으로 한 시뮬레이션이며, 실제 거래 시에는 수수료, 시장 변동성 등에 따라 결과가 달라질 수 있습니다.
@@ -315,6 +318,7 @@
             const fundRateInput = document.getElementById('fundRate');
             const fundDaysInput = document.getElementById('fundDays');
             const totalFundRateInput = document.getElementById('totalFundRate');
+            const maintenanceMarginInput = document.getElementById('maintenanceMarginRate');
             const bitcoinPriceInput = document.getElementById('bitcoinPrice');
             const exchangeRateInput = document.getElementById('exchangeRate');
             const coinQuantityInput = document.getElementById('coinQuantity');
@@ -330,7 +334,6 @@
             const scenario2ExitInput = document.getElementById('scenario2ExitPrice');
             const scenario2ReturnRateInput = document.getElementById('scenario2ReturnRate');
 
-            // 5개의 포지션 비트 입력 필드들을 배열로 가져오기
             const s1PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`scenario1PositionBit${i}`));
             const s2PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`scenario2PositionBit${i}`));
 
@@ -341,6 +344,7 @@
             const infoModal = document.getElementById('infoModal');
             const infoButton = document.getElementById('infoButton');
             const closeButton = document.querySelector('.close-button');
+            const liquidationFormulaDisplay = document.getElementById('liquidationFormula');
 
             infoButton.onclick = function() {
                 infoModal.style.display = 'flex';
@@ -356,7 +360,6 @@
                 }
             }
 
-            // 쉼표 제거 함수
             const cleanNumberInput = (value) => {
                 if (typeof value === 'string') {
                     return parseFloat(value.replace(/,/g, '')) || 0;
@@ -364,7 +367,6 @@
                 return parseFloat(value) || 0;
             };
 
-            // 숫자 포맷팅 함수
             const formatNumber = (num, decimalPlaces) => {
                 if (typeof num !== 'number' || isNaN(num)) return '';
                 if (decimalPlaces !== undefined) {
@@ -379,6 +381,7 @@
 
                 const fundRate = cleanNumberInput(fundRateInput.value);
                 const fundDays = cleanNumberInput(fundDaysInput.value);
+                const maintenanceMarginRate = cleanNumberInput(maintenanceMarginInput.value) / 100;
                 const bitcoinPrice = cleanNumberInput(bitcoinPriceInput.value);
                 const exchangeRate = cleanNumberInput(exchangeRateInput.value);
                 const coinQuantity = cleanNumberInput(coinQuantityInput.value);
@@ -388,19 +391,20 @@
 
                 const totalValuation = bitcoinPrice * exchangeRate * coinQuantity;
                 totalValuationInput.value = formatNumber(totalValuation, 0);
+
+                liquidationFormulaDisplay.innerHTML = `
+                    $\text{청산 가격} = \\frac{\\text{진입가} \\times \\text{포지션 비트} \\times (1+${maintenanceMarginInput.value}\%)}{\\text{증거금} + \\text{포지션 비트}}$
+                `;
             
-                // 시나리오 1 계산 로직
                 const s1Margin = cleanNumberInput(scenario1MarginInput.value);
                 let s1Entry = cleanNumberInput(scenario1EntryInput.value);
                 let s1Exit = cleanNumberInput(scenario1ExitInput.value);
                 let s1ReturnRate = cleanNumberInput(scenario1ReturnRateInput.value);
 
                 if (isScenario1 && (event.target.id === 'scenario1ReturnRate' || event.target.id === 'scenario1EntryPrice' || event.target.id === 'scenario1ExitPrice')) {
-                    if (event.target.id === 'scenario1ReturnRate') {
-                        if (s1Entry !== 0) {
-                            s1Exit = s1Entry * (1 + s1ReturnRate / 100);
-                            scenario1ExitInput.value = formatNumber(s1Exit, 0);
-                        }
+                    if (s1Entry !== 0) {
+                        s1Exit = s1Entry * (1 + s1ReturnRate / 100);
+                        scenario1ExitInput.value = formatNumber(s1Exit, 0);
                     } else {
                         if (s1Entry !== 0) {
                             s1ReturnRate = ((s1Exit - s1Entry) / s1Entry) * 100;
@@ -409,18 +413,15 @@
                     }
                 }
             
-                // 시나리오 2 계산 로직
                 const s2Margin = cleanNumberInput(scenario2MarginInput.value);
                 let s2Entry = cleanNumberInput(scenario2EntryInput.value);
                 let s2Exit = cleanNumberInput(scenario2ExitInput.value);
                 let s2ReturnRate = cleanNumberInput(scenario2ReturnRateInput.value);
 
                 if (isScenario2 && (event.target.id === 'scenario2ReturnRate' || event.target.id === 'scenario2EntryPrice' || event.target.id === 'scenario2ExitPrice')) {
-                    if (event.target.id === 'scenario2ReturnRate') {
-                        if (s2Entry !== 0) {
-                            s2Exit = s2Entry * (1 + s2ReturnRate / 100);
-                            scenario2ExitInput.value = formatNumber(s2Exit, 0);
-                        }
+                    if (s2Entry !== 0) {
+                        s2Exit = s2Entry * (1 + s2ReturnRate / 100);
+                        scenario2ExitInput.value = formatNumber(s2Exit, 0);
                     } else {
                         if (s2Entry !== 0) {
                             s2ReturnRate = ((s2Exit - s2Entry) / s2Entry) * 100;
@@ -434,10 +435,10 @@
                 
                 const totalFundRateDecimal = totalFundRateDisplay / 100;
 
-                renderTable(totalFundRateDecimal, s1Entry, s1Exit, s1Margin, s1PositionBits, s2Entry, s2Exit, s2Margin, s2PositionBits, bitcoinPrice, exchangeRate);
+                renderTable(totalFundRateDecimal, s1Entry, s1Exit, s1Margin, s1PositionBits, s2Entry, s2Exit, s2Margin, s2PositionBits, bitcoinPrice, exchangeRate, maintenanceMarginRate);
             };
 
-            const renderTable = (totalFundRateDecimal, s1Entry, s1Exit, s1Margin, s1PositionBits, s2Entry, s2Exit, s2Margin, s2PositionBits, bitcoinPrice, exchangeRate) => {
+            const renderTable = (totalFundRateDecimal, s1Entry, s1Exit, s1Margin, s1PositionBits, s2Entry, s2Exit, s2Margin, s2PositionBits, bitcoinPrice, exchangeRate, maintenanceMarginRate) => {
                 s1TableBody.innerHTML = '';
                 s2TableBody.innerHTML = '';
                 finalResultsTableBody.innerHTML = '';
@@ -446,8 +447,7 @@
                     const s1PositionBit = s1PositionBits[i];
                     const s2PositionBit = s2PositionBits[i];
 
-                    // 시나리오 1 계산 (새로운 Coin-M 청산가격 공식 적용)
-                    const s1LiquidationPrice = (s1Margin + s1PositionBit) !== 0 ? Math.floor((s1Entry * s1PositionBit * 1.005) / (s1Margin + s1PositionBit)) : 0;
+                    const s1LiquidationPrice = (s1Margin + s1PositionBit) !== 0 ? Math.floor((s1Entry * s1PositionBit * (1 + maintenanceMarginRate)) / (s1Margin + s1PositionBit)) : 0;
                     const s1LiquidationLossRate = s1Entry !== 0 ? (1 - s1LiquidationPrice / s1Entry) * 100 : 0;
                     const s1BitConversionRate = s1Exit && s1Entry ? ((s1Exit - s1Entry) / s1Exit) * 100 : 0;
                     const s1FundNetProfitRate = s1BitConversionRate - totalFundRateDecimal * 100;
@@ -461,13 +461,13 @@
                         <td class="s1-cell">${formatNumber(s1PositionBit, 2)}</td>
                         <td class="s1-cell">${formatNumber(s1BitConversionRate, 2)}%</td>
                         <td class="s1-cell">${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
+                        <td class="s1-cell">${formatNumber(s1FundNetProfitRate, 2)}%</td>
                         <td class="s1-cell">${formatNumber(s1ProfitBit, 2)}</td>
                         <td class="s1-cell">${formatNumber(s1FinalMargin, 2)}</td>
                     `;
                     s1TableBody.appendChild(newRowS1);
 
-                    // 시나리오 2 계산 (새로운 Coin-M 청산가격 공식 적용)
-                    const s2LiquidationPrice = (s2Margin + s2PositionBit) !== 0 ? Math.floor((s2Entry * s2PositionBit * 1.005) / (s2Margin + s2PositionBit)) : 0;
+                    const s2LiquidationPrice = (s2Margin + s2PositionBit) !== 0 ? Math.floor((s2Entry * s2PositionBit * (1 + maintenanceMarginRate)) / (s2Margin + s2PositionBit)) : 0;
                     const s2LiquidationLossRate = s2Entry !== 0 ? (1 - s2LiquidationPrice / s2Entry) * 100 : 0;
                     const s2BitConversionRate = s2Exit && s2Entry ? ((s2Exit - s2Entry) / s2Exit) * 100 : 0;
                     const s2FundNetProfitRate = s2BitConversionRate - totalFundRateDecimal * 100;
@@ -481,12 +481,12 @@
                         <td class="s2-cell">${formatNumber(s2PositionBit, 2)}</td>
                         <td class="s2-cell">${formatNumber(s2BitConversionRate, 2)}%</td>
                         <td class="s2-cell">${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
+                        <td class="s2-cell">${formatNumber(s2FundNetProfitRate, 2)}%</td>
                         <td class="s2-cell">${formatNumber(s2ProfitBit, 2)}</td>
                         <td class="s2-cell">${formatNumber(s2FinalMargin, 2)}</td>
                     `;
                     s2TableBody.appendChild(newRowS2);
 
-                    // 최종 차익 비트 및 환산 가격 계산
                     const finalProfitBit = s2FinalMargin - s1Margin;
                     const finalProfitPrice = finalProfitBit * bitcoinPrice * exchangeRate;
                     
