@@ -449,7 +449,7 @@
                     const s1PositionBit = s1PositionBits[i];
                     const s2PositionBit = s2PositionBits[i];
 
-                    const s1LiquidationPrice = (s1Margin + s1PositionBit) !== 0 ? Math.floor((s1Entry * s1PositionBit * (1 + maintenanceMarginRate)) / (s1Margin + s1PositionBit)) : 0;
+                    const s1LiquidationPrice = (s1Margin + s1PositionBit) !== 0 ? Math.round((s1Entry * s1PositionBit * (1 + maintenanceMarginRate)) / (s1Margin + s1PositionBit)) : 0;
                     const s1LiquidationLossRate = s1Entry !== 0 ? (1 - s1LiquidationPrice / s1Entry) * 100 : 0;
                     const s1BitConversionRate = s1Exit && s1Entry ? ((s1Exit - s1Entry) / s1Exit) * 100 : 0;
                     const s1FundNetProfitRate = s1BitConversionRate - totalFundRateDecimal * 100;
@@ -469,7 +469,7 @@
                     `;
                     s1TableBody.appendChild(newRowS1);
 
-                    const s2LiquidationPrice = (s2Margin + s2PositionBit) !== 0 ? Math.floor((s2Entry * s2PositionBit * (1 + maintenanceMarginRate)) / (s2Margin + s2PositionBit)) : 0;
+                    const s2LiquidationPrice = (s2Margin + s2PositionBit) !== 0 ? Math.round((s2Entry * s2PositionBit * (1 + maintenanceMarginRate)) / (s2Margin + s2PositionBit)) : 0;
                     const s2LiquidationLossRate = s2Entry !== 0 ? (1 - s2LiquidationPrice / s2Entry) * 100 : 0;
                     const s2BitConversionRate = s2Exit && s2Entry ? ((s2Exit - s2Entry) / s2Exit) * 100 : 0;
                     const s2FundNetProfitRate = s2BitConversionRate - totalFundRateDecimal * 100;
