@@ -393,7 +393,7 @@
                 totalValuationInput.value = formatNumber(totalValuation, 0);
 
                 liquidationFormulaDisplay.innerHTML = `
-                    $\text{청산 가격} = \\frac{\\text{진입가} \\times \\text{포지션 비트}}{\\text{증거금} + \\text{포지션 비트} \\times (1-\\text{유지증거금}\%)}$
+                    $\text{청산 가격} = \\frac{(\\text{진입가} \\times \\text{포지션 비트})}{[\\text{증거금} + \\text{포지션 비트} \\times (1 - \\text{유지증거금}\%)]}$
                 `;
             
                 const s1Margin = cleanNumberInput(scenario1MarginInput.value);
