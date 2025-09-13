@@ -213,9 +213,13 @@
                 </div>
                 <div id="s1-split" class="tab-content hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="input-group flex flex-col col-span-full">
+                        <div class="input-group flex flex-col">
                             <label for="scenario1MarginSplit">증거금 (비트코인)</label>
                             <input type="text" id="scenario1MarginSplit" value="15" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="s1LiquidationPriceSplit">청산가</label>
+                            <input type="text" id="s1LiquidationPriceSplit" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 col-span-full">
                             <div class="input-group flex flex-col">
@@ -328,9 +332,13 @@
                 </div>
                 <div id="s2-split" class="tab-content hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="input-group flex flex-col col-span-full">
+                        <div class="input-group flex flex-col">
                             <label for="scenario2MarginSplit">증거금 (비트코인)</label>
                             <input type="text" id="scenario2MarginSplit" value="20" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="s2LiquidationPriceSplit">청산가</label>
+                            <input type="text" id="s2LiquidationPriceSplit" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 col-span-full">
                             <div class="input-group flex flex-col">
@@ -510,6 +518,7 @@
 
             const scenario1MarginInput = document.getElementById('scenario1Margin');
             const scenario1MarginSplitInput = document.getElementById('scenario1MarginSplit');
+            const s1LiquidationPriceSplitInput = document.getElementById('s1LiquidationPriceSplit');
             const scenario1ExitInput = document.getElementById('scenario1ExitPrice');
             const scenario1ExitSplitInput = document.getElementById('scenario1ExitPriceSplit');
             const scenario1EntryInput = document.getElementById('scenario1EntryPrice');
@@ -523,6 +532,7 @@
 
             const scenario2MarginInput = document.getElementById('scenario2Margin');
             const scenario2MarginSplitInput = document.getElementById('scenario2MarginSplit');
+            const s2LiquidationPriceSplitInput = document.getElementById('s2LiquidationPriceSplit');
             const scenario2ExitInput = document.getElementById('scenario2ExitPrice');
             const scenario2ExitSplitInput = document.getElementById('scenario2ExitPriceSplit');
             const scenario2EntryInput = document.getElementById('scenario2EntryPrice');
@@ -619,7 +629,7 @@
                 `;
             
                 // Scenario 1
-                let s1Margin, s1Exit, s1AverageEntryPrice, s1PositionBitsToCalculate;
+                let s1Margin, s1Exit, s1AverageEntryPrice, s1PositionBitsToCalculate, s1LiquidationPrice;
                 if (s1Mode === 'single') {
                     s1Margin = cleanNumberInput(scenario1MarginInput.value);
                     s1Exit = cleanNumberInput(scenario1ExitInput.value);
@@ -646,6 +656,11 @@
                     
                     s1AverageEntryPriceSplit.value = formatNumber(s1AverageEntryPrice, 0);
                     s1TotalPositionBitSplit.value = formatNumber(s1TotalPositionBit);
+                    
+                    const denominator1 = s1Margin + s1TotalPositionBit * (1 - maintenanceMarginRate);
+                    s1LiquidationPrice = denominator1 !== 0 ? Math.round((s1AverageEntryPrice * s1TotalPositionBit) / denominator1) : 0;
+                    s1LiquidationPriceSplitInput.value = formatNumber(s1LiquidationPrice, 0);
+
 
                     s1Exit = cleanNumberInput(scenario1ExitSplitInput.value);
                     let s1ReturnRate = 0;
@@ -662,7 +677,7 @@
                 }
 
                 // Scenario 2
-                let s2Margin, s2Exit, s2AverageEntryPrice, s2PositionBitsToCalculate;
+                let s2Margin, s2Exit, s2AverageEntryPrice, s2PositionBitsToCalculate, s2LiquidationPrice;
                 if (s2Mode === 'single') {
                     s2Margin = cleanNumberInput(scenario2MarginInput.value);
                     s2Exit = cleanNumberInput(scenario2ExitInput.value);
@@ -690,6 +705,10 @@
                     s2AverageEntryPriceSplit.value = formatNumber(s2AverageEntryPrice, 0);
                     s2TotalPositionBitSplit.value = formatNumber(s2TotalPositionBit);
                     
+                    const denominator2 = s2Margin + s2TotalPositionBit * (1 - maintenanceMarginRate);
+                    s2LiquidationPrice = denominator2 !== 0 ? Math.round((s2AverageEntryPrice * s2TotalPositionBit) / denominator2) : 0;
+                    s2LiquidationPriceSplitInput.value = formatNumber(s2LiquidationPrice, 0);
+
                     s2Exit = cleanNumberInput(scenario2ExitSplitInput.value);
                     let s2ReturnRate = 0;
                     if (s2AverageEntryPrice !== 0) {
