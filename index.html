@@ -168,7 +168,7 @@
             <!-- 시나리오 1 카드 -->
             <div class="card">
                 <h2 class="text-xl font-semibold mb-4">시나리오 1</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="input-group flex flex-col">
                         <label for="scenario1Margin">증거금 (비트코인)</label>
                         <input type="text" id="scenario1Margin" value="15" class="rounded-lg">
@@ -185,7 +185,7 @@
                         <label for="scenario1ReturnRate">수익률 (%)</label>
                         <input type="text" id="scenario1ReturnRate" value="50.00" class="rounded-lg">
                     </div>
-                    <div class="input-group flex flex-col col-span-2">
+                    <div class="input-group flex flex-col col-span-full">
                         <label>포지션 비트 (5개 입력)</label>
                         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
                             <input type="text" id="scenario1PositionBit1" value="10" class="rounded-lg">
@@ -201,7 +201,7 @@
             <!-- 시나리오 2 카드 -->
             <div class="card">
                 <h2 class="text-xl font-semibold mb-4">시나리오 2</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="input-group flex flex-col">
                         <label for="scenario2Margin">증거금 (비트코인)</label>
                         <input type="text" id="scenario2Margin" value="20" class="rounded-lg">
@@ -218,7 +218,7 @@
                         <label for="scenario2ReturnRate">수익률 (%)</label>
                         <input type="text" id="scenario2ReturnRate" value="33.33" class="rounded-lg">
                     </div>
-                    <div class="input-group flex flex-col col-span-2">
+                    <div class="input-group flex flex-col col-span-full">
                         <label>포지션 비트 (5개 입력)</label>
                         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
                             <input type="text" id="scenario2PositionBit1" value="15" class="rounded-lg">
@@ -400,33 +400,35 @@
                 let s1Entry = cleanNumberInput(scenario1EntryInput.value);
                 let s1Exit = cleanNumberInput(scenario1ExitInput.value);
                 let s1ReturnRate = cleanNumberInput(scenario1ReturnRateInput.value);
-
-                if (isScenario1 && (event.target.id === 'scenario1ReturnRate' || event.target.id === 'scenario1EntryPrice' || event.target.id === 'scenario1ExitPrice')) {
+                
+                // 시나리오 1 매도가, 수익률 계산
+                if (event && (event.target.id === 'scenario1ReturnRate' || event.target.id === 'scenario1EntryPrice')) {
                     if (s1Entry !== 0) {
                         s1Exit = s1Entry * (1 + s1ReturnRate / 100);
                         scenario1ExitInput.value = formatNumber(s1Exit, 0);
-                    } else {
-                        if (s1Entry !== 0) {
-                            s1ReturnRate = ((s1Exit - s1Entry) / s1Entry) * 100;
-                            scenario1ReturnRateInput.value = formatNumber(s1ReturnRate, 2);
-                        }
+                    }
+                } else if (event && event.target.id === 'scenario1ExitPrice') {
+                    if (s1Entry !== 0) {
+                        s1ReturnRate = ((s1Exit - s1Entry) / s1Entry) * 100;
+                        scenario1ReturnRateInput.value = formatNumber(s1ReturnRate, 2);
                     }
                 }
-            
+
                 const s2Margin = cleanNumberInput(scenario2MarginInput.value);
                 let s2Entry = cleanNumberInput(scenario2EntryInput.value);
                 let s2Exit = cleanNumberInput(scenario2ExitInput.value);
                 let s2ReturnRate = cleanNumberInput(scenario2ReturnRateInput.value);
 
-                if (isScenario2 && (event.target.id === 'scenario2ReturnRate' || event.target.id === 'scenario2EntryPrice' || event.target.id === 'scenario2ExitPrice')) {
+                // 시나리오 2 매도가, 수익률 계산
+                if (event && (event.target.id === 'scenario2ReturnRate' || event.target.id === 'scenario2EntryPrice')) {
                     if (s2Entry !== 0) {
                         s2Exit = s2Entry * (1 + s2ReturnRate / 100);
                         scenario2ExitInput.value = formatNumber(s2Exit, 0);
-                    } else {
-                        if (s2Entry !== 0) {
-                            s2ReturnRate = ((s2Exit - s2Entry) / s2Entry) * 100;
-                            scenario2ReturnRateInput.value = formatNumber(s2ReturnRate, 2);
-                        }
+                    }
+                } else if (event && event.target.id === 'scenario2ExitPrice') {
+                    if (s2Entry !== 0) {
+                        s2ReturnRate = ((s2Exit - s2Entry) / s2Entry) * 100;
+                        scenario2ReturnRateInput.value = formatNumber(s2ReturnRate, 2);
                     }
                 }
                 
