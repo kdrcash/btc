@@ -393,7 +393,7 @@
                 totalValuationInput.value = formatNumber(totalValuation, 0);
 
                 liquidationFormulaDisplay.innerHTML = `
-                    $\text{청산 가격} = \\frac{\\text{진입가} \\times \\text{포지션 비트} \\times (1+${maintenanceMarginInput.value}\%)}{\\text{증거금} + \\text{포지션 비트}}$
+                    $\text{청산 가격} = \\frac{\\text{진입가} \\times \\text{포지션 비트}}{\\text{증거금} + \\text{포지션 비트} \\times (1-\\text{유지증거금}\%)}$
                 `;
             
                 const s1Margin = cleanNumberInput(scenario1MarginInput.value);
@@ -449,7 +449,8 @@
                     const s1PositionBit = s1PositionBits[i];
                     const s2PositionBit = s2PositionBits[i];
 
-                    const s1LiquidationPrice = (s1Margin + s1PositionBit) !== 0 ? Math.round((s1Entry * s1PositionBit * (1 + maintenanceMarginRate)) / (s1Margin + s1PositionBit)) : 0;
+                    const s1Denominator = s1Margin + s1PositionBit * (1 - maintenanceMarginRate);
+                    const s1LiquidationPrice = s1Denominator !== 0 ? Math.round((s1Entry * s1PositionBit) / s1Denominator) : 0;
                     const s1LiquidationLossRate = s1Entry !== 0 ? (1 - s1LiquidationPrice / s1Entry) * 100 : 0;
                     const s1BitConversionRate = s1Exit && s1Entry ? ((s1Exit - s1Entry) / s1Exit) * 100 : 0;
                     const s1FundNetProfitRate = s1BitConversionRate - totalFundRateDecimal * 100;
@@ -469,7 +470,8 @@
                     `;
                     s1TableBody.appendChild(newRowS1);
 
-                    const s2LiquidationPrice = (s2Margin + s2PositionBit) !== 0 ? Math.round((s2Entry * s2PositionBit * (1 + maintenanceMarginRate)) / (s2Margin + s2PositionBit)) : 0;
+                    const s2Denominator = s2Margin + s2PositionBit * (1 - maintenanceMarginRate);
+                    const s2LiquidationPrice = s2Denominator !== 0 ? Math.round((s2Entry * s2PositionBit) / s2Denominator) : 0;
                     const s2LiquidationLossRate = s2Entry !== 0 ? (1 - s2LiquidationPrice / s2Entry) * 100 : 0;
                     const s2BitConversionRate = s2Exit && s2Entry ? ((s2Exit - s2Entry) / s2Exit) * 100 : 0;
                     const s2FundNetProfitRate = s2BitConversionRate - totalFundRateDecimal * 100;
