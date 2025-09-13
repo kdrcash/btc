@@ -217,9 +217,15 @@
                             <label for="scenario1MarginSplit">증거금 (비트코인)</label>
                             <input type="text" id="scenario1MarginSplit" value="15" class="rounded-lg">
                         </div>
-                        <div class="input-group flex flex-col col-span-full">
-                            <label for="scenario1ExitPriceSplit">매도가</label>
-                            <input type="text" id="scenario1ExitPriceSplit" value="180,000" class="rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 col-span-full">
+                            <div class="input-group flex flex-col">
+                                <label for="scenario1ExitPriceSplit">매도가</label>
+                                <input type="text" id="scenario1ExitPriceSplit" value="180,000" class="rounded-lg">
+                            </div>
+                            <div class="input-group flex flex-col">
+                                <label for="scenario1ReturnRateSplit">수익률 (%)</label>
+                                <input type="text" id="scenario1ReturnRateSplit" value="50.00" class="rounded-lg">
+                            </div>
                         </div>
                         <div class="input-group flex flex-col col-span-full">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -233,9 +239,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="input-group flex flex-col col-span-full">
+                        <div id="s1-split-inputs" class="input-group flex flex-col col-span-full">
                             <label>분할 진입 내역 (5분할)</label>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
+                            <div id="s1-split-container" class="grid grid-cols-2 gap-2 mt-2">
                                 <div class="input-group flex flex-col">
                                     <label>진입가 1</label>
                                     <input type="text" id="s1Entry1" value="120,000" class="rounded-lg">
@@ -278,6 +284,7 @@
                                 </div>
                             </div>
                         </div>
+                        <button id="add-s1-split" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">항목 추가</button>
                     </div>
                 </div>
             </div>
@@ -325,9 +332,15 @@
                             <label for="scenario2MarginSplit">증거금 (비트코인)</label>
                             <input type="text" id="scenario2MarginSplit" value="20" class="rounded-lg">
                         </div>
-                        <div class="input-group flex flex-col col-span-full">
-                            <label for="scenario2ExitPriceSplit">매도가</label>
-                            <input type="text" id="scenario2ExitPriceSplit" value="240,000" class="rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 col-span-full">
+                            <div class="input-group flex flex-col">
+                                <label for="scenario2ExitPriceSplit">매도가</label>
+                                <input type="text" id="scenario2ExitPriceSplit" value="240,000" class="rounded-lg">
+                            </div>
+                            <div class="input-group flex flex-col">
+                                <label for="scenario2ReturnRateSplit">수익률 (%)</label>
+                                <input type="text" id="scenario2ReturnRateSplit" value="33.33" class="rounded-lg">
+                            </div>
                         </div>
                         <div class="input-group flex flex-col col-span-full">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -341,9 +354,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="input-group flex flex-col col-span-full">
+                        <div id="s2-split-inputs" class="input-group flex flex-col col-span-full">
                             <label>분할 진입 내역 (5분할)</label>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
+                            <div id="s2-split-container" class="grid grid-cols-2 gap-2 mt-2">
                                 <div class="input-group flex flex-col">
                                     <label>진입가 1</label>
                                     <input type="text" id="s2Entry1" value="180,000" class="rounded-lg">
@@ -386,6 +399,7 @@
                                 </div>
                             </div>
                         </div>
+                        <button id="add-s2-split" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">항목 추가</button>
                     </div>
                 </div>
             </div>
@@ -501,9 +515,11 @@
             const scenario1EntryInput = document.getElementById('scenario1EntryPrice');
             const scenario1ReturnRateInput = document.getElementById('scenario1ReturnRate');
             const s1PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s1PositionBit${i}`));
+            const addS1SplitButton = document.getElementById('add-s1-split');
 
             const s1AverageEntryPriceSplit = document.getElementById('s1AverageEntryPrice');
             const s1TotalPositionBitSplit = document.getElementById('s1TotalPositionBit');
+            const scenario1ReturnRateSplitInput = document.getElementById('scenario1ReturnRateSplit');
 
             const scenario2MarginInput = document.getElementById('scenario2Margin');
             const scenario2MarginSplitInput = document.getElementById('scenario2MarginSplit');
@@ -512,9 +528,11 @@
             const scenario2EntryInput = document.getElementById('scenario2EntryPrice');
             const scenario2ReturnRateInput = document.getElementById('scenario2ReturnRate');
             const s2PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s2PositionBit${i}`));
-            
+            const addS2SplitButton = document.getElementById('add-s2-split');
+
             const s2AverageEntryPriceSplit = document.getElementById('s2AverageEntryPrice');
             const s2TotalPositionBitSplit = document.getElementById('s2TotalPositionBit');
+            const scenario2ReturnRateSplitInput = document.getElementById('scenario2ReturnRateSplit');
 
             const s1EntrySplitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s1Entry${i}`));
             const s1PositionBitSplitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s1PositionBit${i}_split`));
@@ -576,7 +594,7 @@
                 if (decimalPlaces !== undefined) {
                     return num.toFixed(decimalPlaces).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                 }
-                if (num % 1 === 0) { // Check if it's an integer
+                if (num % 1 === 0) {
                     return num.toLocaleString('ko-KR');
                 }
                 return num.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 5 });
@@ -621,7 +639,6 @@
                     }
                 } else { // split mode
                     s1Margin = cleanNumberInput(scenario1MarginSplitInput.value);
-                    s1Exit = cleanNumberInput(scenario1ExitSplitInput.value);
                     const s1Entries = s1EntrySplitInputs.map(input => cleanNumberInput(input.value));
                     s1PositionBitsToCalculate = s1PositionBitSplitInputs.map(input => cleanNumberInput(input.value));
                     let s1TotalPositionBit = s1PositionBitsToCalculate.reduce((a, b) => a + b, 0);
@@ -629,6 +646,19 @@
                     
                     s1AverageEntryPriceSplit.value = formatNumber(s1AverageEntryPrice, 0);
                     s1TotalPositionBitSplit.value = formatNumber(s1TotalPositionBit);
+
+                    s1Exit = cleanNumberInput(scenario1ExitSplitInput.value);
+                    let s1ReturnRate = 0;
+                    if (s1AverageEntryPrice !== 0) {
+                        s1ReturnRate = ((s1Exit - s1AverageEntryPrice) / s1AverageEntryPrice) * 100;
+                    }
+
+                    if (event && event.target.id === 'scenario1ReturnRateSplit') {
+                        s1Exit = s1AverageEntryPrice * (1 + cleanNumberInput(event.target.value) / 100);
+                        scenario1ExitSplitInput.value = formatNumber(s1Exit, 0);
+                    } else {
+                        scenario1ReturnRateSplitInput.value = formatNumber(s1ReturnRate, 2);
+                    }
                 }
 
                 // Scenario 2
@@ -652,7 +682,6 @@
                     }
                 } else { // split mode
                     s2Margin = cleanNumberInput(scenario2MarginSplitInput.value);
-                    s2Exit = cleanNumberInput(scenario2ExitSplitInput.value);
                     const s2Entries = s2EntrySplitInputs.map(input => cleanNumberInput(input.value));
                     s2PositionBitsToCalculate = s2PositionBitSplitInputs.map(input => cleanNumberInput(input.value));
                     let s2TotalPositionBit = s2PositionBitsToCalculate.reduce((a, b) => a + b, 0);
@@ -660,6 +689,19 @@
 
                     s2AverageEntryPriceSplit.value = formatNumber(s2AverageEntryPrice, 0);
                     s2TotalPositionBitSplit.value = formatNumber(s2TotalPositionBit);
+                    
+                    s2Exit = cleanNumberInput(scenario2ExitSplitInput.value);
+                    let s2ReturnRate = 0;
+                    if (s2AverageEntryPrice !== 0) {
+                        s2ReturnRate = ((s2Exit - s2AverageEntryPrice) / s2AverageEntryPrice) * 100;
+                    }
+                    
+                    if (event && event.target.id === 'scenario2ReturnRateSplit') {
+                        s2Exit = s2AverageEntryPrice * (1 + cleanNumberInput(event.target.value) / 100);
+                        scenario2ExitSplitInput.value = formatNumber(s2Exit, 0);
+                    } else {
+                        scenario2ReturnRateSplitInput.value = formatNumber(s2ReturnRate, 2);
+                    }
                 }
                 
                 const totalFundRateDecimal = totalFundRateDisplay / 100;
@@ -820,6 +862,51 @@
                     });
                 }
             };
+            
+            // Helper function to create and attach event listeners to new inputs
+            const createSplitInput = (scenario, index) => {
+                const container = document.getElementById(`${scenario}-split-container`);
+                const inputGroup1 = document.createElement('div');
+                inputGroup1.className = 'input-group flex flex-col';
+                inputGroup1.innerHTML = `
+                    <label>진입가 ${index}</label>
+                    <input type="text" id="${scenario}Entry${index}" class="rounded-lg">
+                `;
+                const inputGroup2 = document.createElement('div');
+                inputGroup2.className = 'input-group flex flex-col';
+                inputGroup2.innerHTML = `
+                    <label>비트 수량 ${index}</label>
+                    <input type="text" id="${scenario}PositionBit${index}_split" class="rounded-lg">
+                `;
+                container.appendChild(inputGroup1);
+                container.appendChild(inputGroup2);
+                
+                // Add event listeners to the new inputs
+                inputGroup1.querySelector('input').addEventListener('input', calculateAll);
+                inputGroup2.querySelector('input').addEventListener('input', calculateAll);
+
+                return {
+                    entryInput: inputGroup1.querySelector('input'),
+                    positionBitInput: inputGroup2.querySelector('input')
+                };
+            };
+            
+            addS1SplitButton.addEventListener('click', () => {
+                const nextIndex = s1EntrySplitInputs.length + 1;
+                const newInputs = createSplitInput('s1', nextIndex);
+                s1EntrySplitInputs.push(newInputs.entryInput);
+                s1PositionBitSplitInputs.push(newInputs.positionBitInput);
+                calculateAll();
+            });
+
+            addS2SplitButton.addEventListener('click', () => {
+                const nextIndex = s2EntrySplitInputs.length + 1;
+                const newInputs = createSplitInput('s2', nextIndex);
+                s2EntrySplitInputs.push(newInputs.entryInput);
+                s2PositionBitSplitInputs.push(newInputs.positionBitInput);
+                calculateAll();
+            });
+
 
             const allInputs = document.querySelectorAll('input');
             allInputs.forEach(input => {
