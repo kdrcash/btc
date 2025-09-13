@@ -107,6 +107,15 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            font-weight: 600;
+        }
+        .tab-button.active {
+            border-bottom-color: #4f46e5;
+            color: #4f46e5;
+        }
     </style>
 </head>
 <body class="p-6">
@@ -168,31 +177,106 @@
             <!-- 시나리오 1 카드 -->
             <div class="card">
                 <h2 class="text-xl font-semibold mb-4">시나리오 1</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="input-group flex flex-col">
-                        <label for="scenario1Margin">증거금 (비트코인)</label>
-                        <input type="text" id="scenario1Margin" value="15" class="rounded-lg">
+                <div class="flex justify-start mb-4 border-b border-gray-200">
+                    <button class="tab-button active" data-tab="s1-single">단일 진입</button>
+                    <button class="tab-button" data-tab="s1-split">분할 진입</button>
+                </div>
+                <div id="s1-single" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="input-group flex flex-col">
+                            <label for="scenario1Margin">증거금 (비트코인)</label>
+                            <input type="text" id="scenario1Margin" value="15" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="scenario1ExitPrice">매도가</label>
+                            <input type="text" id="scenario1ExitPrice" value="180,000" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="scenario1EntryPrice">진입가</label>
+                            <input type="text" id="scenario1EntryPrice" value="120,000" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="scenario1ReturnRate">수익률 (%)</label>
+                            <input type="text" id="scenario1ReturnRate" value="50.00" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <label>포지션 비트 (5개 입력)</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
+                                <input type="text" id="s1PositionBit1" value="10" class="rounded-lg">
+                                <input type="text" id="s1PositionBit2" value="15" class="rounded-lg">
+                                <input type="text" id="s1PositionBit3" value="20" class="rounded-lg">
+                                <input type="text" id="s1PositionBit4" value="25" class="rounded-lg">
+                                <input type="text" id="s1PositionBit5" value="30" class="rounded-lg">
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group flex flex-col">
-                        <label for="scenario1EntryPrice">진입가</label>
-                        <input type="text" id="scenario1EntryPrice" value="120,000" class="rounded-lg">
-                    </div>
-                    <div class="input-group flex flex-col">
-                        <label for="scenario1ExitPrice">매도가</label>
-                        <input type="text" id="scenario1ExitPrice" value="180,000" class="rounded-lg">
-                    </div>
-                    <div class="input-group flex flex-col">
-                        <label for="scenario1ReturnRate">수익률 (%)</label>
-                        <input type="text" id="scenario1ReturnRate" value="50.00" class="rounded-lg">
-                    </div>
-                    <div class="input-group flex flex-col col-span-full">
-                        <label>포지션 비트 (5개 입력)</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
-                            <input type="text" id="scenario1PositionBit1" value="10" class="rounded-lg">
-                            <input type="text" id="scenario1PositionBit2" value="15" class="rounded-lg">
-                            <input type="text" id="scenario1PositionBit3" value="20" class="rounded-lg">
-                            <input type="text" id="scenario1PositionBit4" value="25" class="rounded-lg">
-                            <input type="text" id="scenario1PositionBit5" value="30" class="rounded-lg">
+                </div>
+                <div id="s1-split" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="input-group flex flex-col col-span-full">
+                            <label for="scenario1MarginSplit">증거금 (비트코인)</label>
+                            <input type="text" id="scenario1MarginSplit" value="15" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <label for="scenario1ExitPriceSplit">매도가</label>
+                            <input type="text" id="scenario1ExitPriceSplit" value="180,000" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="input-group flex flex-col">
+                                    <label for="s1AverageEntryPrice">평균 진입가</label>
+                                    <input type="text" id="s1AverageEntryPrice" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label for="s1TotalPositionBit">총 포지션 비트</label>
+                                    <input type="text" id="s1TotalPositionBit" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <label>분할 진입 내역 (5분할)</label>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 1</label>
+                                    <input type="text" id="s1Entry1" value="120,000" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 1</label>
+                                    <input type="text" id="s1PositionBit1_split" value="10" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 2</label>
+                                    <input type="text" id="s1Entry2" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 2</label>
+                                    <input type="text" id="s1PositionBit2_split" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 3</label>
+                                    <input type="text" id="s1Entry3" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 3</label>
+                                    <input type="text" id="s1PositionBit3_split" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 4</label>
+                                    <input type="text" id="s1Entry4" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 4</label>
+                                    <input type="text" id="s1PositionBit4_split" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 5</label>
+                                    <input type="text" id="s1Entry5" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 5</label>
+                                    <input type="text" id="s1PositionBit5_split" value="" class="rounded-lg">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -201,31 +285,106 @@
             <!-- 시나리오 2 카드 -->
             <div class="card">
                 <h2 class="text-xl font-semibold mb-4">시나리오 2</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="input-group flex flex-col">
-                        <label for="scenario2Margin">증거금 (비트코인)</label>
-                        <input type="text" id="scenario2Margin" value="20" class="rounded-lg">
+                <div class="flex justify-start mb-4 border-b border-gray-200">
+                    <button class="tab-button active" data-tab="s2-single">단일 진입</button>
+                    <button class="tab-button" data-tab="s2-split">분할 진입</button>
+                </div>
+                <div id="s2-single" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="input-group flex flex-col">
+                            <label for="scenario2Margin">증거금 (비트코인)</label>
+                            <input type="text" id="scenario2Margin" value="20" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="scenario2ExitPrice">매도가</label>
+                            <input type="text" id="scenario2ExitPrice" value="240,000" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="scenario2EntryPrice">진입가</label>
+                            <input type="text" id="scenario2EntryPrice" value="180,000" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col">
+                            <label for="scenario2ReturnRate">수익률 (%)</label>
+                            <input type="text" id="scenario2ReturnRate" value="33.33" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <label>포지션 비트 (5개 입력)</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
+                                <input type="text" id="s2PositionBit1" value="15" class="rounded-lg">
+                                <input type="text" id="s2PositionBit2" value="20" class="rounded-lg">
+                                <input type="text" id="s2PositionBit3" value="25" class="rounded-lg">
+                                <input type="text" id="s2PositionBit4" value="30" class="rounded-lg">
+                                <input type="text" id="s2PositionBit5" value="35" class="rounded-lg">
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group flex flex-col">
-                        <label for="scenario2EntryPrice">진입가</label>
-                        <input type="text" id="scenario2EntryPrice" value="180,000" class="rounded-lg">
-                    </div>
-                    <div class="input-group flex flex-col">
-                        <label for="scenario2ExitPrice">매도가</label>
-                        <input type="text" id="scenario2ExitPrice" value="240,000" class="rounded-lg">
-                    </div>
-                    <div class="input-group flex flex-col">
-                        <label for="scenario2ReturnRate">수익률 (%)</label>
-                        <input type="text" id="scenario2ReturnRate" value="33.33" class="rounded-lg">
-                    </div>
-                    <div class="input-group flex flex-col col-span-full">
-                        <label>포지션 비트 (5개 입력)</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
-                            <input type="text" id="scenario2PositionBit1" value="15" class="rounded-lg">
-                            <input type="text" id="scenario2PositionBit2" value="20" class="rounded-lg">
-                            <input type="text" id="scenario2PositionBit3" value="25" class="rounded-lg">
-                            <input type="text" id="scenario2PositionBit4" value="30" class="rounded-lg">
-                            <input type="text" id="scenario2PositionBit5" value="35" class="rounded-lg">
+                </div>
+                <div id="s2-split" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="input-group flex flex-col col-span-full">
+                            <label for="scenario2MarginSplit">증거금 (비트코인)</label>
+                            <input type="text" id="scenario2MarginSplit" value="20" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <label for="scenario2ExitPriceSplit">매도가</label>
+                            <input type="text" id="scenario2ExitPriceSplit" value="240,000" class="rounded-lg">
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="input-group flex flex-col">
+                                    <label for="s2AverageEntryPrice">평균 진입가</label>
+                                    <input type="text" id="s2AverageEntryPrice" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label for="s2TotalPositionBit">총 포지션 비트</label>
+                                    <input type="text" id="s2TotalPositionBit" disabled class="bg-gray-100 rounded-lg cursor-not-allowed">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group flex flex-col col-span-full">
+                            <label>분할 진입 내역 (5분할)</label>
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 1</label>
+                                    <input type="text" id="s2Entry1" value="180,000" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 1</label>
+                                    <input type="text" id="s2PositionBit1_split" value="15" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 2</label>
+                                    <input type="text" id="s2Entry2" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 2</label>
+                                    <input type="text" id="s2PositionBit2_split" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 3</label>
+                                    <input type="text" id="s2Entry3" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 3</label>
+                                    <input type="text" id="s2PositionBit3_split" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 4</label>
+                                    <input type="text" id="s2Entry4" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 4</label>
+                                    <input type="text" id="s2PositionBit4_split" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>진입가 5</label>
+                                    <input type="text" id="s2Entry5" value="" class="rounded-lg">
+                                </div>
+                                <div class="input-group flex flex-col">
+                                    <label>비트 수량 5</label>
+                                    <input type="text" id="s2PositionBit5_split" value="" class="rounded-lg">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -240,7 +399,7 @@
                     <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
                         <th>청산가격</th>
                         <th>손실율(%)</th>
-                        <th>포지션 비트</th>
+                        <th>총 포지션 비트</th>
                         <th>비트 전환율 (%)</th>
                         <th>펀비 (%)</th>
                         <th>순이익 비율 (%)</th>
@@ -262,7 +421,7 @@
                     <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
                         <th>청산가격</th>
                         <th>손실율(%)</th>
-                        <th>포지션 비트</th>
+                        <th>총 포지션 비트</th>
                         <th>비트 전환율 (%)</th>
                         <th>펀비 (%)</th>
                         <th>순이익 비율 (%)</th>
@@ -282,6 +441,7 @@
             <table class="w-full text-sm rounded-lg border border-gray-200 final-result-table">
                 <thead>
                     <tr class="bg-gray-200 text-gray-700 uppercase text-xs">
+                        <th>시나리오(포지션 비트)</th>
                         <th>최종 차익 비트</th>
                         <th>평가 가액 (억원)</th>
                     </tr>
@@ -324,18 +484,43 @@
             const coinQuantityInput = document.getElementById('coinQuantity');
             const totalValuationInput = document.getElementById('totalValuation');
 
+            const s1SingleTab = document.querySelector('[data-tab="s1-single"]');
+            const s1SplitTab = document.querySelector('[data-tab="s1-split"]');
+            const s1SingleContent = document.getElementById('s1-single');
+            const s1SplitContent = document.getElementById('s1-split');
+
+            const s2SingleTab = document.querySelector('[data-tab="s2-single"]');
+            const s2SplitTab = document.querySelector('[data-tab="s2-split"]');
+            const s2SingleContent = document.getElementById('s2-single');
+            const s2SplitContent = document.getElementById('s2-split');
+
             const scenario1MarginInput = document.getElementById('scenario1Margin');
-            const scenario1EntryInput = document.getElementById('scenario1EntryPrice');
+            const scenario1MarginSplitInput = document.getElementById('scenario1MarginSplit');
             const scenario1ExitInput = document.getElementById('scenario1ExitPrice');
+            const scenario1ExitSplitInput = document.getElementById('scenario1ExitPriceSplit');
+            const scenario1EntryInput = document.getElementById('scenario1EntryPrice');
             const scenario1ReturnRateInput = document.getElementById('scenario1ReturnRate');
+            const s1PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s1PositionBit${i}`));
+
+            const s1AverageEntryPriceSplit = document.getElementById('s1AverageEntryPrice');
+            const s1TotalPositionBitSplit = document.getElementById('s1TotalPositionBit');
 
             const scenario2MarginInput = document.getElementById('scenario2Margin');
-            const scenario2EntryInput = document.getElementById('scenario2EntryPrice');
+            const scenario2MarginSplitInput = document.getElementById('scenario2MarginSplit');
             const scenario2ExitInput = document.getElementById('scenario2ExitPrice');
+            const scenario2ExitSplitInput = document.getElementById('scenario2ExitPriceSplit');
+            const scenario2EntryInput = document.getElementById('scenario2EntryPrice');
             const scenario2ReturnRateInput = document.getElementById('scenario2ReturnRate');
+            const s2PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s2PositionBit${i}`));
+            
+            const s2AverageEntryPriceSplit = document.getElementById('s2AverageEntryPrice');
+            const s2TotalPositionBitSplit = document.getElementById('s2TotalPositionBit');
 
-            const s1PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`scenario1PositionBit${i}`));
-            const s2PositionBitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`scenario2PositionBit${i}`));
+            const s1EntrySplitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s1Entry${i}`));
+            const s1PositionBitSplitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s1PositionBit${i}_split`));
+
+            const s2EntrySplitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s2Entry${i}`));
+            const s2PositionBitSplitInputs = [1, 2, 3, 4, 5].map(i => document.getElementById(`s2PositionBit${i}_split`));
 
             const s1TableBody = document.getElementById('s1TableBody');
             const s2TableBody = document.getElementById('s2TableBody');
@@ -346,6 +531,25 @@
             const closeButton = document.querySelector('.close-button');
             const liquidationFormulaDisplay = document.getElementById('liquidationFormula');
 
+            let s1Mode = 'single';
+            let s2Mode = 'single';
+
+            const switchTab = (mode, tab) => {
+                const tabs = document.querySelectorAll(`[data-tab^="${tab}-"]`);
+                const contents = document.querySelectorAll(`#${tab}-single, #${tab}-split`);
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.add('hidden'));
+
+                document.querySelector(`[data-tab="${tab}-${mode}"]`).classList.add('active');
+                document.getElementById(`${tab}-${mode}`).classList.remove('hidden');
+            };
+
+            s1SingleTab.addEventListener('click', () => { s1Mode = 'single'; switchTab('single', 's1'); calculateAll(); });
+            s1SplitTab.addEventListener('click', () => { s1Mode = 'split'; switchTab('split', 's1'); calculateAll(); });
+            s2SingleTab.addEventListener('click', () => { s2Mode = 'single'; switchTab('single', 's2'); calculateAll(); });
+            s2SplitTab.addEventListener('click', () => { s2Mode = 'split'; switchTab('split', 's2'); calculateAll(); });
+            
             infoButton.onclick = function() {
                 infoModal.style.display = 'flex';
             }
@@ -372,13 +576,13 @@
                 if (decimalPlaces !== undefined) {
                     return num.toFixed(decimalPlaces).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                 }
-                return num.toLocaleString('ko-KR');
+                if (num % 1 === 0) { // Check if it's an integer
+                    return num.toLocaleString('ko-KR');
+                }
+                return num.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 5 });
             };
 
             const calculateAll = (event) => {
-                const isScenario1 = event && event.target.id.startsWith('scenario1');
-                const isScenario2 = event && event.target.id.startsWith('scenario2');
-
                 const fundRate = cleanNumberInput(fundRateInput.value);
                 const fundDays = cleanNumberInput(fundDaysInput.value);
                 const maintenanceMarginRate = cleanNumberInput(maintenanceMarginInput.value) / 100;
@@ -396,112 +600,224 @@
                     $\text{청산 가격} = \\frac{(\\text{진입가} \\times \\text{포지션 비트})}{[\\text{증거금} + \\text{포지션 비트} \\times (1 - \\text{유지증거금}\%)]}$
                 `;
             
-                const s1Margin = cleanNumberInput(scenario1MarginInput.value);
-                let s1Entry = cleanNumberInput(scenario1EntryInput.value);
-                let s1Exit = cleanNumberInput(scenario1ExitInput.value);
-                let s1ReturnRate = cleanNumberInput(scenario1ReturnRateInput.value);
-                
-                // 시나리오 1 매도가, 수익률 계산
-                if (event && (event.target.id === 'scenario1ReturnRate' || event.target.id === 'scenario1EntryPrice')) {
-                    if (s1Entry !== 0) {
-                        s1Exit = s1Entry * (1 + s1ReturnRate / 100);
-                        scenario1ExitInput.value = formatNumber(s1Exit, 0);
+                // Scenario 1
+                let s1Margin, s1Exit, s1AverageEntryPrice, s1PositionBitsToCalculate;
+                if (s1Mode === 'single') {
+                    s1Margin = cleanNumberInput(scenario1MarginInput.value);
+                    s1Exit = cleanNumberInput(scenario1ExitInput.value);
+                    s1AverageEntryPrice = cleanNumberInput(scenario1EntryInput.value);
+                    s1PositionBitsToCalculate = s1PositionBitInputs.map(input => cleanNumberInput(input.value));
+                    
+                    if (event && event.target.id === 'scenario1ReturnRate') {
+                        if (s1AverageEntryPrice !== 0) {
+                            s1Exit = s1AverageEntryPrice * (1 + cleanNumberInput(scenario1ReturnRateInput.value) / 100);
+                            scenario1ExitInput.value = formatNumber(s1Exit, 0);
+                        }
+                    } else if (event && (event.target.id === 'scenario1EntryPrice' || event.target.id === 'scenario1ExitPrice')) {
+                        if (s1AverageEntryPrice !== 0) {
+                            let s1ReturnRate = ((s1Exit - s1AverageEntryPrice) / s1AverageEntryPrice) * 100;
+                            scenario1ReturnRateInput.value = formatNumber(s1ReturnRate, 2);
+                        }
                     }
-                } else if (event && event.target.id === 'scenario1ExitPrice') {
-                    if (s1Entry !== 0) {
-                        s1ReturnRate = ((s1Exit - s1Entry) / s1Entry) * 100;
-                        scenario1ReturnRateInput.value = formatNumber(s1ReturnRate, 2);
-                    }
+                } else { // split mode
+                    s1Margin = cleanNumberInput(scenario1MarginSplitInput.value);
+                    s1Exit = cleanNumberInput(scenario1ExitSplitInput.value);
+                    const s1Entries = s1EntrySplitInputs.map(input => cleanNumberInput(input.value));
+                    s1PositionBitsToCalculate = s1PositionBitSplitInputs.map(input => cleanNumberInput(input.value));
+                    let s1TotalPositionBit = s1PositionBitsToCalculate.reduce((a, b) => a + b, 0);
+                    s1AverageEntryPrice = s1PositionBitsToCalculate.reduce((sum, bit, i) => sum + bit * s1Entries[i], 0) / s1TotalPositionBit;
+                    
+                    s1AverageEntryPriceSplit.value = formatNumber(s1AverageEntryPrice, 0);
+                    s1TotalPositionBitSplit.value = formatNumber(s1TotalPositionBit);
                 }
 
-                const s2Margin = cleanNumberInput(scenario2MarginInput.value);
-                let s2Entry = cleanNumberInput(scenario2EntryInput.value);
-                let s2Exit = cleanNumberInput(scenario2ExitInput.value);
-                let s2ReturnRate = cleanNumberInput(scenario2ReturnRateInput.value);
+                // Scenario 2
+                let s2Margin, s2Exit, s2AverageEntryPrice, s2PositionBitsToCalculate;
+                if (s2Mode === 'single') {
+                    s2Margin = cleanNumberInput(scenario2MarginInput.value);
+                    s2Exit = cleanNumberInput(scenario2ExitInput.value);
+                    s2AverageEntryPrice = cleanNumberInput(scenario2EntryInput.value);
+                    s2PositionBitsToCalculate = s2PositionBitInputs.map(input => cleanNumberInput(input.value));
 
-                // 시나리오 2 매도가, 수익률 계산
-                if (event && (event.target.id === 'scenario2ReturnRate' || event.target.id === 'scenario2EntryPrice')) {
-                    if (s2Entry !== 0) {
-                        s2Exit = s2Entry * (1 + s2ReturnRate / 100);
-                        scenario2ExitInput.value = formatNumber(s2Exit, 0);
+                    if (event && event.target.id === 'scenario2ReturnRate') {
+                        if (s2AverageEntryPrice !== 0) {
+                            s2Exit = s2AverageEntryPrice * (1 + cleanNumberInput(scenario2ReturnRateInput.value) / 100);
+                            scenario2ExitInput.value = formatNumber(s2Exit, 0);
+                        }
+                    } else if (event && (event.target.id === 'scenario2EntryPrice' || event.target.id === 'scenario2ExitPrice')) {
+                        if (s2AverageEntryPrice !== 0) {
+                            let s2ReturnRate = ((s2Exit - s2AverageEntryPrice) / s2AverageEntryPrice) * 100;
+                            scenario2ReturnRateInput.value = formatNumber(s2ReturnRate, 2);
+                        }
                     }
-                } else if (event && event.target.id === 'scenario2ExitPrice') {
-                    if (s2Entry !== 0) {
-                        s2ReturnRate = ((s2Exit - s2Entry) / s2Entry) * 100;
-                        scenario2ReturnRateInput.value = formatNumber(s2ReturnRate, 2);
-                    }
+                } else { // split mode
+                    s2Margin = cleanNumberInput(scenario2MarginSplitInput.value);
+                    s2Exit = cleanNumberInput(scenario2ExitSplitInput.value);
+                    const s2Entries = s2EntrySplitInputs.map(input => cleanNumberInput(input.value));
+                    s2PositionBitsToCalculate = s2PositionBitSplitInputs.map(input => cleanNumberInput(input.value));
+                    let s2TotalPositionBit = s2PositionBitsToCalculate.reduce((a, b) => a + b, 0);
+                    s2AverageEntryPrice = s2PositionBitsToCalculate.reduce((sum, bit, i) => sum + bit * s2Entries[i], 0) / s2TotalPositionBit;
+
+                    s2AverageEntryPriceSplit.value = formatNumber(s2AverageEntryPrice, 0);
+                    s2TotalPositionBitSplit.value = formatNumber(s2TotalPositionBit);
                 }
-                
-                const s1PositionBits = s1PositionBitInputs.map(input => cleanNumberInput(input.value));
-                const s2PositionBits = s2PositionBitInputs.map(input => cleanNumberInput(input.value));
                 
                 const totalFundRateDecimal = totalFundRateDisplay / 100;
+                
+                // Render tables based on the active tab mode
+                if (s1Mode === 'single') {
+                    renderSingleTable(s1TableBody, totalFundRateDecimal, s1AverageEntryPrice, s1Exit, s1Margin, s1PositionBitsToCalculate, maintenanceMarginRate);
+                } else {
+                    const s1TotalPositionBit = s1PositionBitsToCalculate.reduce((a, b) => a + b, 0);
+                    renderSplitTable(s1TableBody, totalFundRateDecimal, s1AverageEntryPrice, s1Exit, s1Margin, s1TotalPositionBit, maintenanceMarginRate);
+                }
 
-                renderTable(totalFundRateDecimal, s1Entry, s1Exit, s1Margin, s1PositionBits, s2Entry, s2Exit, s2Margin, s2PositionBits, bitcoinPrice, exchangeRate, maintenanceMarginRate);
+                if (s2Mode === 'single') {
+                    renderSingleTable(s2TableBody, totalFundRateDecimal, s2AverageEntryPrice, s2Exit, s2Margin, s2PositionBitsToCalculate, maintenanceMarginRate);
+                } else {
+                    const s2TotalPositionBit = s2PositionBitsToCalculate.reduce((a, b) => a + b, 0);
+                    renderSplitTable(s2TableBody, totalFundRateDecimal, s2AverageEntryPrice, s2Exit, s2Margin, s2TotalPositionBit, maintenanceMarginRate);
+                }
+                
+                renderFinalTable(s1Mode, s1Margin, s1AverageEntryPrice, s1PositionBitsToCalculate, s2Mode, s2Margin, s2AverageEntryPrice, s2PositionBitsToCalculate, bitcoinPrice, exchangeRate);
             };
 
-            const renderTable = (totalFundRateDecimal, s1Entry, s1Exit, s1Margin, s1PositionBits, s2Entry, s2Exit, s2Margin, s2PositionBits, bitcoinPrice, exchangeRate, maintenanceMarginRate) => {
-                s1TableBody.innerHTML = '';
-                s2TableBody.innerHTML = '';
+            const renderSingleTable = (tableBody, totalFundRateDecimal, averageEntryPrice, exitPrice, margin, positionBits, maintenanceMarginRate) => {
+                tableBody.innerHTML = '';
+                positionBits.forEach(positionBit => {
+                    const denominator = margin + positionBit * (1 - maintenanceMarginRate);
+                    const liquidationPrice = denominator !== 0 ? Math.round((averageEntryPrice * positionBit) / denominator) : 0;
+                    const liquidationLossRate = averageEntryPrice !== 0 ? (1 - liquidationPrice / averageEntryPrice) * 100 : 0;
+                    const bitConversionRate = exitPrice && averageEntryPrice ? ((exitPrice - averageEntryPrice) / exitPrice) * 100 : 0;
+                    const fundNetProfitRate = bitConversionRate - totalFundRateDecimal * 100;
+                    const profitBit = positionBit * (fundNetProfitRate / 100);
+                    const finalMargin = margin + profitBit;
+
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td class="font-bold">${formatNumber(liquidationPrice, 0)}</td>
+                        <td>${formatNumber(liquidationLossRate, 2)}%</td>
+                        <td>${formatNumber(positionBit)}</td>
+                        <td>${formatNumber(bitConversionRate, 2)}%</td>
+                        <td>${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
+                        <td>${formatNumber(fundNetProfitRate, 2)}%</td>
+                        <td>${formatNumber(profitBit, 2)}</td>
+                        <td>${formatNumber(finalMargin, 2)}</td>
+                    `;
+                    tableBody.appendChild(newRow);
+                });
+            };
+
+            const renderSplitTable = (tableBody, totalFundRateDecimal, averageEntryPrice, exitPrice, margin, totalPositionBit, maintenanceMarginRate) => {
+                tableBody.innerHTML = '';
+                const denominator = margin + totalPositionBit * (1 - maintenanceMarginRate);
+                const liquidationPrice = denominator !== 0 ? Math.round((averageEntryPrice * totalPositionBit) / denominator) : 0;
+                const liquidationLossRate = averageEntryPrice !== 0 ? (1 - liquidationPrice / averageEntryPrice) * 100 : 0;
+                const bitConversionRate = exitPrice && averageEntryPrice ? ((exitPrice - averageEntryPrice) / exitPrice) * 100 : 0;
+                const fundNetProfitRate = bitConversionRate - totalFundRateDecimal * 100;
+                const profitBit = totalPositionBit * (fundNetProfitRate / 100);
+                const finalMargin = margin + profitBit;
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="font-bold">${formatNumber(liquidationPrice, 0)}</td>
+                    <td>${formatNumber(liquidationLossRate, 2)}%</td>
+                    <td>${formatNumber(totalPositionBit)}</td>
+                    <td>${formatNumber(bitConversionRate, 2)}%</td>
+                    <td>${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
+                    <td>${formatNumber(fundNetProfitRate, 2)}%</td>
+                    <td>${formatNumber(profitBit, 2)}</td>
+                    <td>${formatNumber(finalMargin, 2)}</td>
+                `;
+                tableBody.appendChild(newRow);
+            };
+
+            const renderFinalTable = (s1Mode, s1Margin, s1AverageEntryPrice, s1PositionBits, s2Mode, s2Margin, s2AverageEntryPrice, s2PositionBits, bitcoinPrice, exchangeRate) => {
                 finalResultsTableBody.innerHTML = '';
+
+                // Calculate final margins for Scenario 1
+                let s1FinalMargins = [];
+                if (s1Mode === 'single') {
+                    s1PositionBits.forEach(posBit => {
+                        if (posBit > 0) {
+                            const exitPrice = cleanNumberInput(scenario1ExitInput.value);
+                            const entryPrice = cleanNumberInput(scenario1EntryInput.value);
+                            const fundRate = cleanNumberInput(fundRateInput.value) * cleanNumberInput(fundDaysInput.value) * 3 / 100;
+                            const bitConversionRate = (exitPrice - entryPrice) / exitPrice;
+                            const profitBit = posBit * (bitConversionRate - fundRate);
+                            s1FinalMargins.push(cleanNumberInput(scenario1MarginInput.value) + profitBit);
+                        }
+                    });
+                } else { // split mode
+                    const totalPosBit = s1PositionBits.reduce((a,b) => a+b, 0);
+                    if (totalPosBit > 0) {
+                        const exitPrice = cleanNumberInput(scenario1ExitSplitInput.value);
+                        const entryPrice = s1AverageEntryPrice;
+                        const fundRate = cleanNumberInput(fundRateInput.value) * cleanNumberInput(fundDaysInput.value) * 3 / 100;
+                        const bitConversionRate = (exitPrice - entryPrice) / exitPrice;
+                        const profitBit = totalPosBit * (bitConversionRate - fundRate);
+                        s1FinalMargins.push(cleanNumberInput(scenario1MarginSplitInput.value) + profitBit);
+                    }
+                }
+
+                // Calculate final margins for Scenario 2
+                let s2FinalMargins = [];
+                if (s2Mode === 'single') {
+                    s2PositionBits.forEach(posBit => {
+                        if (posBit > 0) {
+                            const exitPrice = cleanNumberInput(scenario2ExitInput.value);
+                            const entryPrice = cleanNumberInput(scenario2EntryInput.value);
+                            const fundRate = cleanNumberInput(fundRateInput.value) * cleanNumberInput(fundDaysInput.value) * 3 / 100;
+                            const bitConversionRate = (exitPrice - entryPrice) / exitPrice;
+                            const profitBit = posBit * (bitConversionRate - fundRate);
+                            s2FinalMargins.push(cleanNumberInput(scenario2MarginInput.value) + profitBit);
+                        }
+                    });
+                } else { // split mode
+                    const totalPosBit = s2PositionBits.reduce((a,b) => a+b, 0);
+                    if (totalPosBit > 0) {
+                        const exitPrice = cleanNumberInput(scenario2ExitSplitInput.value);
+                        const entryPrice = s2AverageEntryPrice;
+                        const fundRate = cleanNumberInput(fundRateInput.value) * cleanNumberInput(fundDaysInput.value) * 3 / 100;
+                        const bitConversionRate = (exitPrice - entryPrice) / exitPrice;
+                        const profitBit = totalPosBit * (bitConversionRate - fundRate);
+                        s2FinalMargins.push(cleanNumberInput(scenario2MarginSplitInput.value) + profitBit);
+                    }
+                }
                 
-                for (let i = 0; i < 5; i++) {
-                    const s1PositionBit = s1PositionBits[i];
-                    const s2PositionBit = s2PositionBits[i];
+                // Display results
+                if (s1FinalMargins.length > 0) {
+                    s1FinalMargins.forEach((margin, index) => {
+                        let totalS1Bits = s1PositionBits.reduce((a, b) => a + b, 0);
+                        let scenarioLabel = s1Mode === 'single' ? `시나리오 1 (${formatNumber(s1PositionBits[index])})` : `시나리오 1 (${formatNumber(totalS1Bits)})`;
+                        const finalProfitBit = margin - (s1Mode === 'single' ? cleanNumberInput(scenario1MarginInput.value) : cleanNumberInput(scenario1MarginSplitInput.value));
+                        const finalProfitPrice = finalProfitBit * bitcoinPrice * exchangeRate;
+                        const finalProfitPriceBillion = (finalProfitPrice / 100000000).toFixed(2);
+                        const finalRow = document.createElement('tr');
+                        finalRow.innerHTML = `
+                            <td>${scenarioLabel}</td>
+                            <td>${formatNumber(finalProfitBit, 2)}</td>
+                            <td>${finalProfitPriceBillion}억</td>
+                        `;
+                        finalResultsTableBody.appendChild(finalRow);
+                    });
+                }
 
-                    const s1Denominator = s1Margin + s1PositionBit * (1 - maintenanceMarginRate);
-                    const s1LiquidationPrice = s1Denominator !== 0 ? Math.round((s1Entry * s1PositionBit) / s1Denominator) : 0;
-                    const s1LiquidationLossRate = s1Entry !== 0 ? (1 - s1LiquidationPrice / s1Entry) * 100 : 0;
-                    const s1BitConversionRate = s1Exit && s1Entry ? ((s1Exit - s1Entry) / s1Exit) * 100 : 0;
-                    const s1FundNetProfitRate = s1BitConversionRate - totalFundRateDecimal * 100;
-                    const s1ProfitBit = s1PositionBit * (s1FundNetProfitRate / 100);
-                    const s1FinalMargin = s1Margin + s1ProfitBit;
-
-                    const newRowS1 = document.createElement('tr');
-                    newRowS1.innerHTML = `
-                        <td class="font-bold s1-cell">${formatNumber(s1LiquidationPrice, 0)}</td>
-                        <td class="s1-cell">${formatNumber(s1LiquidationLossRate, 2)}%</td>
-                        <td class="s1-cell">${formatNumber(s1PositionBit, 2)}</td>
-                        <td class="s1-cell">${formatNumber(s1BitConversionRate, 2)}%</td>
-                        <td class="s1-cell">${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
-                        <td class="s1-cell">${formatNumber(s1FundNetProfitRate, 2)}%</td>
-                        <td class="s1-cell">${formatNumber(s1ProfitBit, 2)}</td>
-                        <td class="s1-cell">${formatNumber(s1FinalMargin, 2)}</td>
-                    `;
-                    s1TableBody.appendChild(newRowS1);
-
-                    const s2Denominator = s2Margin + s2PositionBit * (1 - maintenanceMarginRate);
-                    const s2LiquidationPrice = s2Denominator !== 0 ? Math.round((s2Entry * s2PositionBit) / s2Denominator) : 0;
-                    const s2LiquidationLossRate = s2Entry !== 0 ? (1 - s2LiquidationPrice / s2Entry) * 100 : 0;
-                    const s2BitConversionRate = s2Exit && s2Entry ? ((s2Exit - s2Entry) / s2Exit) * 100 : 0;
-                    const s2FundNetProfitRate = s2BitConversionRate - totalFundRateDecimal * 100;
-                    const s2ProfitBit = s2PositionBit * (s2FundNetProfitRate / 100);
-                    const s2FinalMargin = s2Margin + s2ProfitBit;
-
-                    const newRowS2 = document.createElement('tr');
-                    newRowS2.innerHTML = `
-                        <td class="font-bold s2-cell">${formatNumber(s2LiquidationPrice, 0)}</td>
-                        <td class="s2-cell">${formatNumber(s2LiquidationLossRate, 2)}%</td>
-                        <td class="s2-cell">${formatNumber(s2PositionBit, 2)}</td>
-                        <td class="s2-cell">${formatNumber(s2BitConversionRate, 2)}%</td>
-                        <td class="s2-cell">${formatNumber(totalFundRateDecimal * 100, 2)}%</td>
-                        <td class="s2-cell">${formatNumber(s2FundNetProfitRate, 2)}%</td>
-                        <td class="s2-cell">${formatNumber(s2ProfitBit, 2)}</td>
-                        <td class="s2-cell">${formatNumber(s2FinalMargin, 2)}</td>
-                    `;
-                    s2TableBody.appendChild(newRowS2);
-
-                    const finalProfitBit = s2FinalMargin - s1Margin;
-                    const finalProfitPrice = finalProfitBit * bitcoinPrice * exchangeRate;
-                    
-                    const finalProfitPriceBillion = (finalProfitPrice / 100000000).toFixed(2);
-                    
-                    const finalRow = document.createElement('tr');
-                    finalRow.innerHTML = `
-                        <td>${formatNumber(finalProfitBit, 2)}</td>
-                        <td>${finalProfitPriceBillion}억</td>
-                    `;
-                    finalResultsTableBody.appendChild(finalRow);
+                if (s2FinalMargins.length > 0) {
+                    s2FinalMargins.forEach((margin, index) => {
+                        let totalS2Bits = s2PositionBits.reduce((a, b) => a + b, 0);
+                        let scenarioLabel = s2Mode === 'single' ? `시나리오 2 (${formatNumber(s2PositionBits[index])})` : `시나리오 2 (${formatNumber(totalS2Bits)})`;
+                        const finalProfitBit = margin - (s2Mode === 'single' ? cleanNumberInput(scenario2MarginInput.value) : cleanNumberInput(scenario2MarginSplitInput.value));
+                        const finalProfitPrice = finalProfitBit * bitcoinPrice * exchangeRate;
+                        const finalProfitPriceBillion = (finalProfitPrice / 100000000).toFixed(2);
+                        const finalRow = document.createElement('tr');
+                        finalRow.innerHTML = `
+                            <td>${scenarioLabel}</td>
+                            <td>${formatNumber(finalProfitBit, 2)}</td>
+                            <td>${finalProfitPriceBillion}억</td>
+                        `;
+                        finalResultsTableBody.appendChild(finalRow);
+                    });
                 }
             };
 
@@ -518,6 +834,7 @@
                 });
             });
             
+            // Initial calculation
             calculateAll();
         });
     </script>
